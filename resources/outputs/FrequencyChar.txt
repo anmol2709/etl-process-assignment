@@ -1,0 +1,12 @@
+name -> 1
+is -> 2
+anthony -> 1
+world -> 1
+gupta -> 1
+surname -> 1
+sarna -> 2
+my -> 2
+anmol -> 2
+hello -> 1
+and -> 1
+pankhurie -> 2
