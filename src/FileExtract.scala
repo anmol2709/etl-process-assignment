@@ -14,13 +14,13 @@ import scala.io.Source
 
 //Input from Directory
 class InputFile extends Input {
-  override val fileNameInput = "./resources/inputs/demo-file.txt"
+  override val fileNameInput = "./resources/inputs/"
 
 }
 
 //Output to Directory
 class OutputFile extends Output {
-  override val fileNameOutput = "./resources/outputs/demo-file.txt"
+  override val fileNameOutput = "./resources/outputs/"
 
 }
 
@@ -35,12 +35,36 @@ class TransformToUpper extends Transform {
 
 object FileExtract extends App {
   try {
-    val lines = Source.fromFile((new InputFile).fileNameInput).getLines()
-    val writer = new PrintWriter((new OutputFile).fileNameOutput)
-    for (line <- lines) writer.write(((new TransformToUpper).transformation(line)) + "\n")
-    writer.close()
-    println("File Successfully Copied")
+
+    val listOfFiles = (for {
+      file <- new File((new InputFile).fileNameInput).listFiles
+
+      if file.isFile
+
+    } yield file).toList
+
+    val fileNames = for {
+      files <- listOfFiles
+    } yield files.getName
+
+    val listOfLines = for {
+      files <- listOfFiles
+    } yield Source.fromFile(files).getLines.mkString("\n")
+
+    val outputFiles = for {
+      i <- fileNames
+
+    } yield (new OutputFile).fileNameOutput + i
+
+    for (i <- fileNames.indices) {
+      val writer = new PrintWriter(outputFiles(i))
+      writer.write((new TransformToUpper).transformation(listOfLines(i)))
+      writer.close
+    }
+
   }
+
+
   catch {
     case ex: FileNotFoundException => {
       println("Missing file exception")
@@ -48,6 +72,9 @@ object FileExtract extends App {
 
     case ex: IOException => {
       println("IO Exception")
+    }
+      case ex: Exception => {
+      println("Generic Exception")
     }
   }
 }
